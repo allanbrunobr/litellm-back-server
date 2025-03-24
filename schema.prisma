@@ -1,0 +1,192 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-py"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model LiteLLM_VerificationToken {
+  id         String?   @id @default(cuid())
+  token      String   @unique
+  expires    DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([expires])
+}
+
+model LiteLLM_Proxy_Budget {
+  budget_id       String   @id @default(cuid())
+  budget_name     String?
+  max_budget      Float
+  current_spend   Float    @default(0)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  soft_budget     Float    @default(0)
+  time_window     String?
+  user_id         String?
+  team_id         String?
+  model_id        String?
+  spend_threshold_alert Boolean? @default(false)
+
+  @@index([user_id])
+  @@index([team_id])
+  @@index([model_id])
+  @@index([created_at])
+}
+
+model LiteLLM_BudgetTags {
+  id        String @id @default(cuid())
+  budget_id String
+  tag_id    String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  
+  @@index([budget_id])
+  @@index([tag_id])
+}
+
+model LiteLLM_SpendLogs {
+  request_id         String   @id @default(cuid())
+  api_key            String?  
+  model              String?
+  spend              Float
+  tokens             Int
+  prompt_tokens      Int
+  completion_tokens  Int
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  user_id            String?
+  team_id            String?
+  end_user_id        String?
+  proxy_server_request String?
+  response_time      Float?
+  
+  @@index([api_key])
+  @@index([model])
+  @@index([user_id])
+  @@index([team_id])
+  @@index([created_at])
+}
+
+model LiteLLM_Config {
+  param_name    String   @id 
+  param_value   String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@index([param_name])
+}
+
+model LiteLLM_UserTable {
+  user_id             String   @id @default(cuid())
+  user_email          String?  @unique
+  user_role           String?
+  max_parallel_requests Int?
+  tpm_limit           Int?
+  rpm_limit           Int?
+  budget_id           String?
+  spend               Float    @default(0)
+  models              String?
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@index([user_id])
+}
+
+model LiteLLM_TeamTable {
+  team_id       String   @id @default(cuid())
+  team_alias    String?  @unique
+  team_name     String?  
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  metadata      String?
+  budget_id     String?
+  tpm_limit     Int?
+  rpm_limit     Int?
+  max_parallel_requests Int?
+  spend         Float    @default(0)
+  models        String?
+
+  @@index([team_id])
+  @@index([team_alias])
+}
+
+model LiteLLM_TeamUsers {
+  id        String @id @default(cuid())
+  team_id   String
+  user_id   String
+  spend     Float    @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  
+  @@index([team_id])
+  @@index([user_id])
+}
+
+model LiteLLM_Keys {
+  key_id            String   @id @default(cuid())
+  key_name          String?
+  api_key           String   @unique
+  hashed_key        String?  @unique
+  key_alias         String?
+  expires           DateTime?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+  user_id           String?
+  team_id           String?
+  aliases           String?
+  spend             Float?   @default(0)
+  max_parallel_requests Int?
+  tpm_limit         Int?
+  rpm_limit         Int?
+  models            String?
+  metadata          String?
+  budget_id         String?
+
+  @@index([user_id])
+  @@index([team_id])
+  @@index([api_key])
+  @@index([max_parallel_requests])
+  @@index([tpm_limit])
+  @@index([rpm_limit])
+}
+
+model LiteLLM_KeyTags {
+  id        String @id @default(cuid())
+  key_id    String
+  tag_id    String
+  
+  @@index([key_id])
+  @@index([tag_id])
+}
+
+model LiteLLM_Tags {
+  tag_id    String @id @default(cuid())
+  tag_name  String
+  
+  @@index([tag_name])
+}
+
+model LiteLLM_OrganizationTable {
+  organization_id    String   @id @default(cuid())
+  organization_alias String?  @unique
+  organization_name  String?
+  models             String?
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  metadata           String?
+  budget_id          String?
+  tpm_limit          Int?
+  rpm_limit          Int?
+  max_parallel_requests Int?
+  spend              Float    @default(0)
+
+  @@index([organization_id])
+  @@index([organization_alias])
+} 

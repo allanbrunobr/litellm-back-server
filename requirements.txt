@@ -1,0 +1,8 @@
+litellm[proxy]>=0.12.0
+gunicorn
+prisma
+psycopg2-binary
+python-dotenv
+flask
+flask-cors
+requests 
