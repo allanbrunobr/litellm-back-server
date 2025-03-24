@@ -86,9 +86,6 @@ __pycache__/
 *.db
 *.sqlite
 
-# Configuration files
-config.json
-config.yaml
 
 # Build artifacts
 dist/
