@@ -81,9 +81,6 @@ __pycache__/
 *.pyd
 .Python
 
-# Docker
-Dockerfile
-docker-compose.yml
 
 # Database
 *.db
